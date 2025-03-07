@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "ai-agent"
+version = "0.1.0"
+description = ""
+authors = ["Raynor <jonggu.woo@fitpet.co.kr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+black = "^25.1.0"
+langchain = "^0.3.20"
+langchain-community = "^0.3.19"
+langchain-ollama = "^0.2.3"
+langchain-google-genai = "^2.0.11"
+langchain-text-splitters = "^0.3.6"
+langgraph = "^0.3.5"
+python-dotenv = "^1.0.1"
+tavily-python = "^0.5.1"
+fake-useragent = "^2.0.3"
+beautifulsoup4 = "^4.13.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py312']
+skip-string-normalization = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''

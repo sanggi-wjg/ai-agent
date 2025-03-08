@@ -120,19 +120,19 @@ def summarize_node(state: State) -> Command[Literal[END]]:
     )
 
     prompt = PromptTemplate.from_template(
-        f"""
+        """
 Your task is to access the content of the given URL, summarize its key points, and create a new file containing the summarized information.  
 
 **Instructions:**  
 1. Fetch the content from the following URL: {urls}  
-2. Extract the most relevant key points and main ideas from the content.  
-3. Summarize the information in a clear and concise manner.  
-4. Ensure the summary is well-structured and easy to understand.  
+2. Summarize the information in a clear and concise manner from the content.
+3. Create a new file and store the summarized content in it.  
 
 **Output Format:**  
 - Title of the content  
 - Key points (bullet points or numbered list)  
 - A short paragraph summarizing the overall message  
+- Ensure the summary is well-structured and easy to understand.
 
 Finish the task once completed.
 """.strip().format(

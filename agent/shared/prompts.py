@@ -18,3 +18,12 @@ Begin!
 
 Question: {input}
 Thought:{agent_scratchpad}""".strip()
+
+QUERY_WRITER_INSTRUCTIONS = """Your goal is to generate a targeted web search query.
+The query will gather information related to a specific topic.
+
+<TOPIC>
+{topic}
+</TOPIC>
+
+Provide your response:"""

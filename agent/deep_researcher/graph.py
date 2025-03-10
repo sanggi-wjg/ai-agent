@@ -11,6 +11,7 @@ from agent.deep_researcher.configuration import Configuration
 from agent.deep_researcher.prompts import query_writer_instructions, summarizer_instructions, reflection_instructions
 from agent.deep_researcher.state import SummaryState, SummaryStateInput, SummaryStateOutput
 from agent.deep_researcher.utils import tavily_search, deduplicate_and_format_sources, format_sources
+from agent.shared.utils import draw_graph_png
 
 
 # Nodes
@@ -178,3 +179,11 @@ builder.add_conditional_edges("reflect_on_summary", route_research)
 builder.add_edge("finalize_summary", END)
 
 graph = builder.compile()
+
+draw_graph_png("deep_research_agent.png", graph)
+stream = graph.stream({"research_topic": "kubernetes"})
+for s in stream:
+    for agent, e in s.items():
+        print("===========================")
+        print(agent, e, flush=True)
+        print("===========================")

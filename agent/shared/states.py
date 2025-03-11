@@ -1,4 +1,9 @@
-from typing import TypedDict
+from dataclasses import dataclass, field
+from typing import TypedDict, Annotated, List
+
+from langchain_community.agent_toolkits.openapi.spec import ReducedOpenAPISpec
+
+from agent.shared.response_formats import APIPlanResponse
 
 
 class DeepResearchState(TypedDict):
@@ -9,3 +14,14 @@ class DeepResearchState(TypedDict):
     web_search_responses: list
     keep_searching: bool
     summary: str
+
+
+@dataclass(kw_only=True)
+class APITestState:
+    token: str = field(default=None)
+    open_api_spec: ReducedOpenAPISpec = field(default=None)
+    endpoint_size: int = field(default=0)
+    endpoint_index: int = field(default=0)
+    plans: List[APIPlanResponse] = field(default=None)
+    results: List[dict] = field(default=None)
+    summary: str = field(default=None)

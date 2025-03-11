@@ -46,4 +46,4 @@ def write_file_tool(
 def human_assistance_tool(
     query: Annotated[str, "Request to human"],
 ) -> Annotated[str, "Human response"]:
-    return input(f"\n🔹 [Agent] 요청: {query}\n💬 [User] 입력: ")
+    return input(f"🤖 [Agent] 요청: {query}\n 💬 [User] 입력: ")

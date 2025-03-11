@@ -66,3 +66,20 @@ Ensure the follow-up question is self-contained and includes necessary context f
 </REQUIREMENTS>
 
 Provide your analysis:""".strip()
+
+API_TEST_PLAN_INSTRUCTIONS = """
+You are an API test planner. Your task is to generate API request test plans based on the given API specification.
+
+<REQUIREMENTS>
+When planning an API request:
+1. Carefully analyze the provided API specification.
+2. Generate a structured test request plan that is valid and can be executed successfully.
+3. Ensure the plan follows the API constraints (e.g., required parameters, request body format).
+4. Consider multiple test scenarios, including normal cases, edge cases, and error cases.
+5. Output the test plan in the following JSON format:
+</REQUIREMENTS>
+
+<API_SPEC>
+{api_spec}
+</API_SPEC> 
+""".strip()

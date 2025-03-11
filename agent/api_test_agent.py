@@ -9,7 +9,7 @@ from langgraph.types import Command
 from agent.shared.prompts import API_TEST_PLAN_INSTRUCTIONS
 from agent.shared.response_formats import APIPlanResponse
 from agent.shared.states import APITestState
-from agent.shared.utils import draw_graph_png, request_api_by_plan
+from agent.shared.utils import draw_graph_png, request_api_by_plan, reduce_openapi_spec
 
 
 class Node:
@@ -85,26 +85,26 @@ graph_builder.add_edge(Node.FINALIZE_NODE, END)
 graph = graph_builder.compile()
 draw_graph_png("api_test_agent.png", graph)
 
-# tag_input = "banner"
-# server_env_input = "stg"
-# access_token_input = None
-#
-# open_api_spec = reduce_openapi_spec(
-#     filepath="dataset/donotcommit.yaml",
-#     target_server_env=server_env_input,
-#     target_tags=[tag_input],
-#     dereference=True,
-# )
-# stream = graph.stream(
-#     {
-#         "token": access_token_input,
-#         "open_api_spec": open_api_spec,
-#         "endpoint_size": len(open_api_spec.endpoints),
-#         "endpoint_index": 0,
-#         "plans": [],
-#         "results": [],
-#     }
-# )
-# for s in stream:
-#     for agent, e in s.items():
-#         print(agent, e, flush=True)
+tag_input = "banner"
+server_env_input = "stg"
+access_token_input = None
+
+open_api_spec = reduce_openapi_spec(
+    filepath="dataset/donotcommit.yaml",
+    target_server_env=server_env_input,
+    target_tags=[tag_input],
+    dereference=True,
+)
+stream = graph.stream(
+    {
+        "token": access_token_input,
+        "open_api_spec": open_api_spec,
+        "endpoint_size": len(open_api_spec.endpoints),
+        "endpoint_index": 0,
+        "plans": [],
+        "results": [],
+    }
+)
+for s in stream:
+    for agent, e in s.items():
+        print(agent, e, flush=True)

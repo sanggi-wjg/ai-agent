@@ -78,8 +78,4 @@ When planning an API request:
 4. Consider multiple test scenarios, including normal cases, edge cases, and error cases.
 5. Output the test plan in the following JSON format:
 </REQUIREMENTS>
-
-<API_SPEC>
-{api_spec}
-</API_SPEC> 
 """.strip()

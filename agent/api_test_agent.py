@@ -19,11 +19,17 @@ class Node:
 
 
 def plan_node(state: APITestState):
-    endpoint = state.open_api_spec.endpoints[state.endpoint_index]
+    endpoint = str(state.open_api_spec.endpoints[state.endpoint_index]).replace("{", "{{").replace("}", "}}")
+    success_results = [res for res in state.request_results if res["is_success"]]
+
+    system_message = API_TEST_PLAN_INSTRUCTIONS + "<API_SPECIFICATION>" + endpoint + "</API_SPECIFICATION>"
+    if success_results:
+        system_message += "<Previous Success Results>\n" + str(success_results) + "\n</Previous Success Results>"
+
     llm = ChatOllama(model="qwen2.5:14b-instruct-q8_0", temperature=0.1).with_structured_output(APIPlanResponse)
     prompt = ChatPromptTemplate.from_messages(
         [
-            {"role": "system", "content": API_TEST_PLAN_INSTRUCTIONS.format(api_spec=endpoint)},
+            {"role": "system", "content": system_message},
         ]
     )
     chain = prompt | llm
@@ -31,17 +37,17 @@ def plan_node(state: APITestState):
     return Command(
         goto=Node.REQUEST_NODE,
         update={
-            "plans": state.plans + [chat_response],
+            "request_plans": state.request_plans + [chat_response],
         },
     )
 
 
 def request_node(state: APITestState):
     server = state.open_api_spec.servers[0]["url"]
-    is_success, result = request_api_by_plan(server, state.plans[-1])
+    result = request_api_by_plan(server, state.request_plans[-1], state.token)
     return {
         "endpoint_index": state.endpoint_index + 1,
-        "results": state.results + [result],
+        "request_results": state.request_results + [result],
     }
 
 
@@ -53,11 +59,11 @@ def finalize_node(state: APITestState):
                 "role": "system",
                 "content": "You are a summarizer. Your task is to summarize the results of an API request.",
             },
-            {"role": "user", "content": "Summarize the results: {results}"},
+            {"role": "user", "content": "Summarize the results in KOREAN: {results}"},
         ]
     )
     chain = prompt | llm
-    chat_response = chain.invoke({"results": state.results})
+    chat_response = chain.invoke({"results": state.request_results})
     return Command(
         goto=END,
         update={
@@ -95,16 +101,20 @@ open_api_spec = reduce_openapi_spec(
     target_tags=[tag_input],
     dereference=True,
 )
+if not open_api_spec.endpoints:
+    print("No endpoints found")
+    exit()
+
 stream = graph.stream(
     {
         "token": access_token_input,
         "open_api_spec": open_api_spec,
         "endpoint_size": len(open_api_spec.endpoints),
         "endpoint_index": 0,
-        "plans": [],
-        "results": [],
+        "request_plans": [],
+        "request_results": [],
     }
 )
 for s in stream:
-    for agent, e in s.items():
-        print(agent, e, flush=True)
+    for agent, res in s.items():
+        print(agent, res, flush=True)

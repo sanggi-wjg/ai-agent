@@ -3,6 +3,7 @@ from typing import Annotated
 
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.tools import tool
+from langchain_experimental.utilities import PythonREPL
 from langgraph.types import interrupt
 
 
@@ -40,10 +41,40 @@ def write_file_tool(
 
 
 @tool(
-    name_or_callable="human_assistance_tool",
+    name_or_callable="human_assistance_input_tool",
     description="When you requires human help or information, you can use this tool.",
 )
-def human_assistance_tool(
+def human_assistance_input_tool(
     query: Annotated[str, "Request to human"],
 ) -> Annotated[str, "Human response"]:
     return input(f"🤖 [Agent] 요청: {query}\n 💬 [User] 입력: ")
+
+
+@tool(
+    name_or_callable="human_assistance_interrupt_tool",
+    description="When you requires human help or information, you can use this tool.",
+)
+def human_assistance_interrupt_tool(
+    query: Annotated[str, "Request to human"],
+) -> Annotated[str, "Human response"]:
+    """Request assistance from a human."""
+    human_response = interrupt({"query": query})
+    return human_response["data"]
+
+
+@tool(
+    name_or_callable="python_tool",
+    description="Use this to execute python code. If you want to see the output of a value, you should print it out with `print(...)`. This is visible to the user.",
+)
+def python_tool(
+    code: Annotated[str, "The python code to execute to generate your chart."],
+):
+    try:
+        repl = PythonREPL()
+        result = repl.run(code)
+        return (
+            f"Successfully executed: {code}\nStdout: {result}\n\n"
+            "If you have completed all tasks, respond with FINAL ANSWER."
+        )
+    except Exception as e:
+        return f"Failed to execute. Error: {repr(e)}"

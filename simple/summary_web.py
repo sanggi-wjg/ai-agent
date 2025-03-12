@@ -1,9 +1,12 @@
+from dotenv import load_dotenv
 from langchain.globals import set_debug
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-loader = WebBaseLoader(web_path="https://0x0001.cc/blog/good-engineer.md")
+loader = WebBaseLoader(
+    web_path="https://www.lesswrong.com/posts/tqmQTezvXGFmfSe7f/how-much-are-llms-actually-boosting-real-world-programmer",
+)
 docs = loader.load()
 
 set_debug(False)
@@ -33,7 +36,7 @@ When summarizing a text:
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>  
-# 📌 주제  
+## 📌 주제  
 [Briefly summarize the main idea]  
 
 ## 📖 내용  
@@ -47,20 +50,22 @@ When summarizing a text:
 - Key message to deliver to main goal  
 
 ## ✅ 결론 & 활용 방법  
-- Summary of how can leverage this information  
+- Summary of how can leverage this information
 </OUTPUT_FORMAT>
 """.strip()
 
 prompt = ChatPromptTemplate.from_messages(
     [
         {"role": "system", "content": system_template},
-        {"role": "user", "content": "Summarize the following content in korean: {docs}"},
+        {"role": "user", "content": "Summarize the following content in KOREAN: {text}"},
     ]
 )
-llm = ChatOllama(model="exaone3.5:7.8b-instruct-fp16", temperature=0.1)
-# llm = ChatOllama(model="exaone3.5:7.8b", temperature=0.1)
+
+load_dotenv()
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite", temperature=0.1)
+# llm = ChatOllama(model="exaone3.5:7.8b-instruct-fp16", temperature=0.1)
 
 chain = prompt | llm
-events = chain.stream({"docs": format_documents(docs)})
+events = chain.stream({"text": format_documents(docs)})
 for token in events:
     print(token.content, end="", flush=True)

@@ -1,5 +1,5 @@
 import re
-from typing import Union, Tuple
+from typing import Dict, Any, Optional
 
 import requests
 import yaml
@@ -83,7 +83,7 @@ def _reduce_my_openapi_spec(
     )
 
 
-def request_api_by_plan(server: str, plan: APIPlanResponse) -> Tuple[bool, dict]:
+def request_api_by_plan(server: str, plan: APIPlanResponse, token: Optional[str]) -> Dict[str, Any]:
     try:
         url = server + plan.endpoint
         response = requests.request(
@@ -91,11 +91,15 @@ def request_api_by_plan(server: str, plan: APIPlanResponse) -> Tuple[bool, dict]
             url=url,
             params=plan.query_params,
             json=plan.payload,
+            headers={"Authorization": f"Bearer {token}"} if token else {},
         )
-        response.raise_for_status()
-        return True, {
+        return {
+            "endpoint": plan.endpoint,
+            "is_success": response.ok,
             "status_code": response.status_code,
             "body": response.json() if response.headers.get("Content-Type") == "application/json" else response.text,
         }
-    except requests.HTTPError as e:
-        return False, {"error": str(e)}
+    except Exception as e:
+        return {
+            "error": str(e),
+        }

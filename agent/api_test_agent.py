@@ -9,7 +9,7 @@ from langgraph.types import Command
 from agent.shared.prompts import API_TEST_PLAN_INSTRUCTIONS
 from agent.shared.response_formats import APIPlanResponse
 from agent.shared.states import APITestState
-from agent.shared.utils import draw_graph_png, request_api_by_plan, reduce_openapi_spec
+from agent.shared.utils import draw_graph_png, request_api_by_plan, reduce_openapi_spec, escape_with_double_curly_braces
 
 
 class Node:
@@ -19,12 +19,13 @@ class Node:
 
 
 def plan_node(state: APITestState):
-    endpoint = str(state.open_api_spec.endpoints[state.endpoint_index]).replace("{", "{{").replace("}", "}}")
+    endpoint = escape_with_double_curly_braces(state.open_api_spec.endpoints[state.endpoint_index])
     success_results = [res for res in state.request_results if res["is_success"]]
 
-    system_message = API_TEST_PLAN_INSTRUCTIONS + "<API_SPECIFICATION>" + endpoint + "</API_SPECIFICATION>"
+    system_message = API_TEST_PLAN_INSTRUCTIONS + f"\n\n<API_SPECIFICATION>\n{endpoint}\n</API_SPECIFICATION>"
     if success_results:
-        system_message += "<Previous Success Results>\n" + str(success_results) + "\n</Previous Success Results>"
+        result_text = escape_with_double_curly_braces(success_results)
+        system_message += f"\n\n<Previous Success Results>\n{result_text}\n</Previous Success Results>"
 
     llm = ChatOllama(model="qwen2.5:14b-instruct-q8_0", temperature=0.1).with_structured_output(APIPlanResponse)
     prompt = ChatPromptTemplate.from_messages(

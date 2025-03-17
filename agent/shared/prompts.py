@@ -77,5 +77,11 @@ When planning an API request:
 3. Ensure the plan follows the API constraints (e.g., required parameters, request body format).
 4. Consider multiple test scenarios, including normal cases, edge cases, and error cases.
 5. Output the test plan in the following JSON format:
+
+If the endpoint requires an ID, use the ID from the response body of the previous success results:  
+- The ID is extracted from the correct field in the previous response body.
+- If multiple IDs are available, select the most relevant one based on context.
+- If no previous successful response is found, do not make assumptions—return an appropriate error or request the required ID explicitly.
+- Always validate that the extracted ID is correctly formatted before using it in the next request.
 </REQUIREMENTS>
 """.strip()

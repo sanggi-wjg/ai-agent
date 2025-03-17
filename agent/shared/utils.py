@@ -103,3 +103,7 @@ def request_api_by_plan(server: str, plan: APIPlanResponse, token: Optional[str]
         return {
             "error": str(e),
         }
+
+
+def escape_with_double_curly_braces(element: Any) -> str:
+    return str(element).replace("{", "{{").replace("}", "}}")

@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from langchain.globals import set_debug
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,7 +8,7 @@ loader = WebBaseLoader(
 )
 docs = loader.load()
 
-set_debug(False)
+# set_debug(False)
 
 
 def format_documents(documents):

@@ -36,7 +36,7 @@ system_prompt = """
 
 
 llm = ChatOllama(
-    model="gemma3:27b",
+    model="gemma3:4b",
     temparature=0.6,
 )
 prompt = ChatPromptTemplate.from_messages(

@@ -6,7 +6,7 @@ authors = ["Raynor <jonggu.woo@fitpet.co.kr>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.15"
 black = "^25.12.0"
 langchain = "^1.2.0"
 langgraph = "^1.0.5"
@@ -20,6 +20,12 @@ tavily-python = "^0.7.17"
 beautifulsoup4 = "^4.14.3"
 fake-useragent = "^2.2.0"
 pymysql = "^1.1.2"
+torch = { version = "^2.9.1", python = ">=3.12,<3.15" }
+torchvision = { version = "^0.24.1", python = ">=3.12,<3.15" }
+torchaudio = { version = "^2.9.1", python = ">=3.12,<3.15" }
+diffusers = {extras = ["torch"], version = "^0.36.0"}
+soundfile = "^0.13.1"
+transformers = "^4.57.3"
 
 [build-system]
 requires = ["poetry-core"]
@@ -27,7 +33,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
-target-version = ['py312']
+target-version = ['py314']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''

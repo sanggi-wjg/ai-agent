@@ -35,10 +35,7 @@ system_prompt = """
 """.strip()
 
 
-llm = ChatOllama(
-    model="gemma3:4b",
-    temparature=0.6,
-)
+llm = ChatOllama(model="gemma3:4b", temparature=0.3)
 prompt = ChatPromptTemplate.from_messages(
     [
         {"role": "system", "content": system_prompt},

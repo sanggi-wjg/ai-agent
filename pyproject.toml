@@ -26,6 +26,7 @@ torchaudio = { version = "^2.10.0", python = ">=3.12,<3.15" }
 diffusers = { extras = ["torch"], version = "^0.37.0" }
 soundfile = "^0.13.1"
 transformers = "^4.57.3"
+deepagents = "^0.4.12"
 
 [build-system]
 requires = ["poetry-core"]
